@@ -1,12 +1,172 @@
+"use client";
+
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { UMP_2025 } from "@/lib/constants/compliance";
+
+const COMPANY = {
+  name: "PT Tambang Indonesia",
+  slug: "pt-tambang-indonesia",
+  address: "Jl. Mineral No. 99, Jakarta Selatan",
+  phone: "(021) 1234-5678",
+  email: "admin@tambangindonesia.com",
+  npwp: "01.234.567.8-012.000",
+  bpjsPerusahaan: "BPJS-2020-12345",
+};
 
 export default function SettingsPage() {
+  const [activeTab, setActiveTab] = useState<"company" | "ump" | "users">("company");
+
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-charcoal">Settings</h1>
-      <Card>
-        <p className="text-gray-500 text-sm">Company profile, AI provider keys, user management coming soon.</p>
-      </Card>
+      <div>
+        <h1 className="text-xl font-semibold text-charcoal">Pengaturan</h1>
+        <p className="text-sm text-gray-500 mt-0.5">
+          Profil perusahaan, referensi UMP/UMR, dan manajemen pengguna
+        </p>
+      </div>
+
+      <div className="flex gap-2 overflow-x-auto pb-2">
+        {[
+          { id: "company" as const, label: "Profil Perusahaan" },
+          { id: "ump" as const, label: "Referensi UMP/UMR" },
+          { id: "users" as const, label: "Pengguna" },
+        ].map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setActiveTab(t.id)}
+            className={`shrink-0 px-4 py-2 rounded-lg text-sm transition-colors ${
+              activeTab === t.id
+                ? "bg-tiffany text-white"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "company" && (
+        <Card>
+          <h2 className="text-sm font-semibold text-charcoal mb-4">Data Perusahaan</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Nama Perusahaan</label>
+              <input
+                defaultValue={COMPANY.name}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Slug</label>
+              <input
+                defaultValue={COMPANY.slug}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-xs font-medium text-gray-600 mb-1">Alamat</label>
+              <input
+                defaultValue={COMPANY.address}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Telepon</label>
+              <input
+                defaultValue={COMPANY.phone}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Email</label>
+              <input
+                defaultValue={COMPANY.email}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">NPWP Perusahaan</label>
+              <input
+                defaultValue={COMPANY.npwp}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">No. BPJS Perusahaan</label>
+              <input
+                defaultValue={COMPANY.bpjsPerusahaan}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button className="px-4 py-2 bg-tiffany text-white text-sm rounded-lg hover:bg-tiffany-dark">
+              Simpan
+            </button>
+          </div>
+        </Card>
+      )}
+
+      {activeTab === "ump" && (
+        <Card>
+          <h2 className="text-sm font-semibold text-charcoal mb-1">Upah Minimum Provinsi (UMP) 2025</h2>
+          <p className="text-xs text-gray-500 mb-4">PP 36/2021 — digunakan untuk referensi perhitungan upah</p>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="text-left px-3 py-2 text-xs font-medium text-gray-600">Provinsi</th>
+                <th className="text-right px-3 py-2 text-xs font-medium text-gray-600">UMP 2025</th>
+                <th className="text-right px-3 py-2 text-xs font-medium text-gray-600">Estimasi UMK Tambang</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {Object.entries(UMP_2025).map(([prov, amount]) => (
+                <tr key={prov}>
+                  <td className="px-3 py-2 text-sm text-charcoal">{prov}</td>
+                  <td className="px-3 py-2 text-right text-sm font-medium">
+                    Rp {amount.toLocaleString("id-ID")}
+                  </td>
+                  <td className="px-3 py-2 text-right text-sm text-gray-500">
+                    Rp {Math.round(amount * 1.15).toLocaleString("id-ID")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="mt-3 p-3 bg-yellow-50 rounded-lg">
+            <p className="text-xs text-yellow-700">
+              UMK (Upah Minimum Kabupaten/Kota) untuk sektor pertambangan umumnya 10-20% di atas UMP.
+              Data ini perlu diperbarui setiap tahun setelah pengumuman resmi dari Kemnaker.
+            </p>
+          </div>
+        </Card>
+      )}
+
+      {activeTab === "users" && (
+        <Card>
+          <h2 className="text-sm font-semibold text-charcoal mb-4">Pengguna Sistem</h2>
+          {[
+            { name: "Admin Utama", email: "admin@tambangindonesia.com", role: "Super Admin" },
+            { name: "HR Manager", email: "hr@tambangindonesia.com", role: "HR Manager" },
+            { name: "Payroll Staff", email: "payroll@tambangindonesia.com", role: "Payroll" },
+          ].map((u) => (
+            <div key={u.email} className="flex items-center justify-between py-3 border-b border-gray-100">
+              <div>
+                <p className="text-sm text-charcoal font-medium">{u.name}</p>
+                <p className="text-xs text-gray-400">{u.email}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-0.5 bg-gray-100 rounded">{u.role}</span>
+                <button className="text-xs text-gray-400 hover:text-gray-600">Edit</button>
+              </div>
+            </div>
+          ))}
+          <button className="mt-4 w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-400 hover:border-tiffany hover:text-tiffany transition-colors">
+            + Tambah Pengguna
+          </button>
+        </Card>
+      )}
     </div>
   );
 }
