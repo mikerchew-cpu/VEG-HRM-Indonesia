@@ -12,8 +12,9 @@ export default function HelpDeskPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [expandedReg, setExpandedReg] = useState<string | null>(null);
   const [enquiryForm, setEnquiryForm] = useState({ subject: "", category: "", message: "", priority: "medium" });
-  const [enquiries, setEnquiries] = useState<{ id: number; subject: string; category: string; status: string; date: string }[]>([]);
+  const [enquiries, setEnquiries] = useState<{ id: number; subject: string; category: string; message: string; priority: string; status: string; date: string }[]>([]);
   const [enquirySubmitted, setEnquirySubmitted] = useState(false);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<typeof enquiries[number] | null>(null);
   const [uploadedDocs, setUploadedDocs] = useState<{ name: string; size: string; type: string; date: string }[]>([]);
 
   const isId = lang === "id";
@@ -30,10 +31,17 @@ export default function HelpDeskPage() {
 
   function handleEnquirySubmit(e: React.FormEvent) {
     e.preventDefault();
-    setEnquiries((prev) => [
-      { id: Date.now(), subject: enquiryForm.subject, category: enquiryForm.category, status: "open", date: new Date().toISOString().slice(0, 10) },
-      ...prev,
-    ]);
+    const newEnquiry = {
+      id: Date.now(),
+      subject: enquiryForm.subject,
+      category: enquiryForm.category,
+      message: enquiryForm.message,
+      priority: enquiryForm.priority,
+      status: "open",
+      date: new Date().toISOString().slice(0, 10),
+    };
+    setEnquiries((prev) => [newEnquiry, ...prev]);
+    setSelectedEnquiry(newEnquiry);
     setEnquirySubmitted(true);
     setEnquiryForm({ subject: "", category: "", message: "", priority: "medium" });
     setTimeout(() => setEnquirySubmitted(false), 3000);
@@ -278,16 +286,88 @@ export default function HelpDeskPage() {
             ) : (
               <div className="space-y-2">
                 {enquiries.map((eq) => (
-                  <div key={eq.id} className="p-3 border border-[var(--card-border)] rounded-lg">
+                  <button
+                    key={eq.id}
+                    onClick={() => setSelectedEnquiry(selectedEnquiry?.id === eq.id ? null : eq)}
+                    className={`w-full text-left p-3 border rounded-lg transition-colors ${
+                      selectedEnquiry?.id === eq.id
+                        ? "border-tiffany bg-tiffany-light/30 dark:bg-tiffany-dark/10"
+                        : "border-[var(--card-border)] hover:bg-[var(--muted)]"
+                    }`}
+                  >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-[var(--foreground)]">{eq.subject}</span>
-                      <span className="text-[10px] px-2 py-0.5 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded font-medium">
-                        {isId ? "Terbuka" : "Open"}
-                      </span>
+                      <span className="text-sm font-medium text-[var(--foreground)] truncate">{eq.subject}</span>
+                      <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${
+                          eq.status === "open"
+                            ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                            : eq.status === "in-progress"
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                            : eq.status === "resolved"
+                            ? "bg-tiffany-light text-tiffany-dark"
+                            : "bg-gray-100 text-gray-500 dark:bg-gray-900/30 dark:text-gray-400"
+                        }`}>
+                          {isId
+                            ? (eq.status === "open" ? "Terbuka" : eq.status === "in-progress" ? "Diproses" : eq.status === "resolved" ? "Selesai" : "Ditutup")
+                            : eq.status}
+                        </span>
+                        <svg className={`w-4 h-4 text-[var(--muted-fg)] transition-transform ${selectedEnquiry?.id === eq.id ? "rotate-180" : ""}`}
+                          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
                     </div>
                     <p className="text-xs text-[var(--muted-fg)]">{eq.category} · {eq.date}</p>
-                  </div>
+                  </button>
                 ))}
+              </div>
+            )}
+
+            {/* Detail panel */}
+            {selectedEnquiry && (
+              <div className="mt-4 p-4 border border-tiffany rounded-lg bg-[var(--card)]">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-[var(--foreground)]">{selectedEnquiry.subject}</h3>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={selectedEnquiry.status}
+                      onChange={(e) => {
+                        const newStatus = e.target.value;
+                        setEnquiries((prev) =>
+                          prev.map((eq) => eq.id === selectedEnquiry.id ? { ...eq, status: newStatus } : eq)
+                        );
+                        setSelectedEnquiry((prev) => prev ? { ...prev, status: newStatus } : null);
+                      }}
+                      className="px-2 py-1 text-xs border border-[var(--input)] bg-[var(--card)] rounded focus:outline-none focus:ring-2 focus:ring-tiffany"
+                    >
+                      {["open", "in-progress", "resolved", "closed"].map((s) => (
+                        <option key={s} value={s}>
+                          {isId
+                            ? (s === "open" ? "Terbuka" : s === "in-progress" ? "Diproses" : s === "resolved" ? "Selesai" : "Ditutup")
+                            : s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mb-3 text-xs text-[var(--muted-fg)]">
+                  <span>{selectedEnquiry.category}</span>
+                  <span>·</span>
+                  <span>{selectedEnquiry.date}</span>
+                  <span>·</span>
+                  <span className={`font-medium ${
+                    selectedEnquiry.priority === "urgent" ? "text-danger" :
+                    selectedEnquiry.priority === "high" ? "text-warning" :
+                    "text-[var(--muted-fg)]"
+                  }`}>
+                    {isId
+                      ? (selectedEnquiry.priority === "low" ? "Rendah" : selectedEnquiry.priority === "medium" ? "Sedang" : selectedEnquiry.priority === "high" ? "Tinggi" : "Urgent")
+                      : selectedEnquiry.priority}
+                  </span>
+                </div>
+                <div className="p-3 bg-[var(--muted)] rounded-lg">
+                  <p className="text-sm text-[var(--foreground)] whitespace-pre-wrap">{selectedEnquiry.message}</p>
+                </div>
               </div>
             )}
           </Card>
