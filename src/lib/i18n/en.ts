@@ -7,6 +7,7 @@ export const en: Record<TranslationKeys, string> = {
   "nav.attendance": "Attendance",
   "nav.payroll": "Payroll",
   "nav.compliance": "Compliance",
+  "nav.helpdesk": "Help Desk",
   "nav.reports": "AI Reports",
   "nav.settings": "Settings",
 

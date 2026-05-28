@@ -5,6 +5,7 @@ export const id = {
   "nav.attendance": "Absensi",
   "nav.payroll": "Penggajian",
   "nav.compliance": "Kepatuhan",
+  "nav.helpdesk": "Help Desk",
   "nav.reports": "Laporan AI",
   "nav.settings": "Pengaturan",
 

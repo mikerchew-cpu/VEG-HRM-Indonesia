@@ -10,6 +10,7 @@ const navItemKeys = [
   { label: "nav.attendance", href: "/attendance", icon: "⏱" },
   { label: "nav.payroll", href: "/payroll", icon: "💰" },
   { label: "nav.compliance", href: "/compliance", icon: "⚖" },
+  { label: "nav.helpdesk", href: "/helpdesk", icon: "🎧" },
   { label: "nav.reports", href: "/reports", icon: "📊" },
   { label: "nav.settings", href: "/settings", icon: "⚙" },
 ];
