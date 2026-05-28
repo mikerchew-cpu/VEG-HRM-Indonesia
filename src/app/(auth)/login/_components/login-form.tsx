@@ -22,7 +22,7 @@ export function LoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ login: email, password }),
       });
 
       const data = await res.json();
@@ -77,19 +77,19 @@ export function LoginForm() {
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
-          {t("login.email")}
+          {lang === "id" ? "Email atau No. Telepon" : "Email or Phone Number"}
         </label>
         <input
           id="email"
-          type="email"
+          type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          autoComplete="email"
+          autoComplete="username"
           className="w-full px-4 py-2.5 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm
                      focus:outline-none focus:ring-2 focus:ring-[var(--input-focus)] focus:border-transparent
                      placeholder:text-[var(--muted-fg)]"
-          placeholder="admin@perusahaan-tambang.com"
+          placeholder={lang === "id" ? "admin@perusahaan.com atau 08123456789" : "admin@company.com or 08123456789"}
         />
       </div>
 

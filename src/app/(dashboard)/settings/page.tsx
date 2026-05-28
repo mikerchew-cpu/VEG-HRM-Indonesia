@@ -15,7 +15,10 @@ const COMPANY = {
 };
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<"company" | "ump" | "users" | "ai">("company");
+  const [activeTab, setActiveTab] = useState<"company" | "ump" | "users" | "ai" | "password">("company");
+  const [pwData, setPwData] = useState({ current: "", newPass: "", confirm: "" });
+  const [pwMsg, setPwMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [pwLoading, setPwLoading] = useState(false);
   const [aiKeys, setAiKeys] = useState({
     deepseek: "",
     claude: "",
@@ -60,6 +63,7 @@ export default function SettingsPage() {
           { id: "company" as const, label: "Profil Perusahaan" },
           { id: "ump" as const, label: "Referensi UMP/UMR" },
           { id: "users" as const, label: "Pengguna" },
+          { id: "password" as const, label: "Ubah Password" },
           { id: "ai" as const, label: "AI Providers" },
         ].map((t) => (
           <button
@@ -195,6 +199,93 @@ export default function SettingsPage() {
           <button className="mt-4 w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-400 hover:border-tiffany hover:text-tiffany transition-colors">
             + Tambah Pengguna
           </button>
+        </Card>
+      )}
+
+      {activeTab === "password" && (
+        <Card>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-1">Ubah Password</h2>
+          <p className="text-xs text-[var(--muted-fg)] mb-4">Password minimal 6 karakter, gunakan kombinasi huruf dan angka</p>
+
+          {pwMsg && (
+            <div className={`mb-4 p-3 rounded-lg text-xs ${
+              pwMsg.type === "success"
+                ? "bg-tiffany-light text-tiffany-dark"
+                : "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400"
+            }`}>
+              {pwMsg.text}
+            </div>
+          )}
+
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            if (pwData.newPass !== pwData.confirm) {
+              setPwMsg({ type: "error", text: "Password baru dan konfirmasi tidak cocok" });
+              return;
+            }
+            if (pwData.newPass.length < 6) {
+              setPwMsg({ type: "error", text: "Password minimal 6 karakter" });
+              return;
+            }
+            setPwLoading(true);
+            setPwMsg(null);
+            try {
+              const res = await fetch("/api/auth/change-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentPassword: pwData.current, newPassword: pwData.newPass }),
+              });
+              const data = await res.json();
+              if (res.ok) {
+                setPwMsg({ type: "success", text: "✓ Password berhasil diubah!" });
+                setPwData({ current: "", newPass: "", confirm: "" });
+              } else {
+                setPwMsg({ type: "error", text: data.error || "Gagal mengubah password" });
+              }
+            } catch {
+              setPwMsg({ type: "error", text: "Gagal terhubung ke server" });
+            }
+            setPwLoading(false);
+          }} className="space-y-4 max-w-md">
+            <div>
+              <label className="block text-xs font-medium text-[var(--muted-fg)] mb-1">Password Saat Ini</label>
+              <input
+                type="password"
+                value={pwData.current}
+                onChange={(e) => setPwData((p) => ({ ...p, current: e.target.value }))}
+                required
+                className="w-full px-3 py-2 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-tiffany"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[var(--muted-fg)] mb-1">Password Baru</label>
+              <input
+                type="password"
+                value={pwData.newPass}
+                onChange={(e) => setPwData((p) => ({ ...p, newPass: e.target.value }))}
+                required
+                minLength={6}
+                className="w-full px-3 py-2 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-tiffany"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[var(--muted-fg)] mb-1">Konfirmasi Password Baru</label>
+              <input
+                type="password"
+                value={pwData.confirm}
+                onChange={(e) => setPwData((p) => ({ ...p, confirm: e.target.value }))}
+                required
+                className="w-full px-3 py-2 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-tiffany"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={pwLoading}
+              className="px-4 py-2 bg-tiffany text-white text-sm rounded-lg hover:bg-tiffany-dark disabled:opacity-50"
+            >
+              {pwLoading ? "Menyimpan..." : "Ubah Password"}
+            </button>
+          </form>
         </Card>
       )}
 

@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { login, password } = await req.json();
+
+    // Detect if input is email or phone
+    const isEmail = login.includes("@");
+    const body = isEmail
+      ? { email: login, password }
+      : { phone: login.startsWith("+") ? login : `+62${login.replace(/^0+/, "")}`, password };
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`,
@@ -12,7 +18,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
           apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(body),
       }
     );
 
@@ -27,7 +33,11 @@ export async function POST(req: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      user: { id: data.user?.id, email: data.user?.email },
+      user: {
+        id: data.user?.id,
+        email: data.user?.email,
+        phone: data.user?.phone,
+      },
       redirect: "/",
     });
 
@@ -39,8 +49,6 @@ export async function POST(req: NextRequest) {
       maxAge: 60 * 60 * 24 * 7,
     };
 
-    // Set cookies that @supabase/ssr middleware expects
-    // Format: sb-{project-ref}-auth-token
     const projectRef = process.env.NEXT_PUBLIC_SUPABASE_URL?.match(
       /https:\/\/(.+)\.supabase\.co/
     )?.[1];
