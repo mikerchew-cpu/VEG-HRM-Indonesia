@@ -1,0 +1,140 @@
+import type { TranslationKeys } from "./id";
+
+export const en: Record<TranslationKeys, string> = {
+  // Navigation
+  "nav.dashboard": "Dashboard",
+  "nav.employees": "Employees",
+  "nav.attendance": "Attendance",
+  "nav.payroll": "Payroll",
+  "nav.compliance": "Compliance",
+  "nav.reports": "AI Reports",
+  "nav.settings": "Settings",
+
+  // Header
+  "header.welcome": "Welcome back",
+  "header.signout": "Sign Out",
+  "header.signingout": "Signing out...",
+
+  // Login
+  "login.title": "Sign In",
+  "login.subtitle": "Access your HRM dashboard",
+  "login.email": "Email",
+  "login.password": "Password",
+  "login.signin": "Sign In",
+  "login.processing": "Processing...",
+  "login.error.invalid": "Invalid email or password. Please try again.",
+  "login.error.connection": "Failed to connect to server. Check your connection.",
+  "login.brand.title": "VEG HRM",
+  "login.brand.subtitle": "Indonesia Mining Industry",
+  "login.brand.quote": "Managing mining HR from pit to head office — compliant, accurate, and integrated.",
+
+  // Employees
+  "employees.title": "Employees",
+  "employees.subtitle": "Manage all employee data",
+  "employees.add": "Add Employee",
+  "employees.search": "Search name, NIK, or position...",
+  "employees.total": "Total Employees",
+  "employees.active": "Active",
+  "employees.pkwt": "Contract (PKWT)",
+  "employees.pkwtt": "Permanent (PKWTT)",
+  "employees.code": "Code",
+  "employees.name": "Name",
+  "employees.position": "Position",
+  "employees.department": "Department",
+  "employees.site": "Site",
+  "employees.status": "Status",
+  "employees.salary": "Base Salary",
+  "employees.action": "Action",
+  "employees.detail": "Detail",
+  "employees.all": "All",
+
+  // Add Employee
+  "emp.add.title": "Add New Employee",
+  "emp.add.subtitle": "Complete all data according to official employee documents",
+  "emp.add.save": "Save Employee",
+  "emp.add.cancel": "Cancel",
+  "emp.section.personal": "Personal Data",
+  "emp.section.tax": "Tax Data",
+  "emp.section.bpjs": "BPJS Data",
+  "emp.section.employment": "Employment Data",
+  "emp.section.compensation": "Compensation Data",
+  "emp.section.certification": "Mining Certifications",
+  "emp.section.emergency": "Emergency Contact",
+
+  // Attendance
+  "attendance.title": "Attendance",
+  "attendance.subtitle": "Manage shifts, rotations, overtime, and worker attendance",
+  "attendance.present": "Present Today",
+  "attendance.late": "Late",
+  "attendance.leave": "Leave / Sick",
+  "attendance.absent": "Absent",
+  "attendance.shift": "Shift & Rotation Patterns",
+  "attendance.overtime": "Overtime Calculation (UU Cipta Kerja)",
+  "attendance.offline": "Offline Attendance",
+  "attendance.offline.desc": "In remote mining areas, attendance is recorded via GPS + face recognition. Data syncs automatically when connection is available.",
+
+  // Payroll
+  "payroll.title": "Payroll",
+  "payroll.subtitle": "Payroll, PPh 21 TER, BPJS, THR — compliant with Indonesian regulations",
+  "payroll.gross": "Total Gross",
+  "payroll.pph21": "Total PPh 21 Deductions",
+  "payroll.bpjs": "Total BPJS (Employee)",
+  "payroll.net": "Total Net",
+  "payroll.run": "Run Pay Slip",
+  "payroll.ter": "PPh 21 TER",
+  "payroll.bpjs.label": "BPJS",
+  "payroll.thr": "THR",
+
+  // Compliance
+  "compliance.title": "Regulatory Compliance",
+  "compliance.subtitle": "Compliance with Labor Law, Tax, BPJS, and mining regulations",
+  "compliance.score": "Compliance Score",
+  "compliance.critical": "Critical Issues",
+  "compliance.warning": "Warnings",
+  "compliance.ok": "Compliant Items",
+  "compliance.overview": "Compliance Overview",
+  "compliance.ump": "UMP/UMR 2025",
+  "compliance.cert": "Mining Certifications",
+  "compliance.smk3": "SMK3 & HSE",
+
+  // Reports
+  "reports.title": "AI Reports",
+  "reports.subtitle": "Automated analysis & recommendations — powered by DeepSeek, Claude, and Gemini",
+  "reports.generate": "Generate New",
+  "reports.saved": "Saved Reports",
+  "reports.settings": "AI Settings",
+  "reports.config": "Report Configuration",
+  "reports.type": "Report Type",
+  "reports.period": "Period",
+  "reports.model": "AI Model",
+  "reports.btn": "Generate Report",
+  "reports.result": "Report Result",
+
+  // Settings
+  "settings.title": "Settings",
+  "settings.subtitle": "Company profile, UMP/UMR reference, and user management",
+  "settings.company": "Company Profile",
+  "settings.ump": "UMP/UMR Reference",
+  "settings.users": "Users",
+  "settings.ai": "AI Providers",
+  "settings.save": "Save",
+
+  // Theme
+  "theme.light": "Light",
+  "theme.dark": "Dark",
+  "theme.system": "System",
+  "language.en": "English",
+  "language.id": "Indonesia",
+
+  // Common
+  "common.loading": "Loading...",
+  "common.error": "Error",
+  "common.success": "Success",
+  "common.back": "Back",
+  "common.edit": "Edit",
+  "common.delete": "Delete",
+  "common.search": "Search",
+  "common.filter": "Filter",
+  "common.export": "Export",
+  "common.print": "Print",
+};

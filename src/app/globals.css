@@ -3,6 +3,27 @@
 :root {
   --background: #ffffff;
   --foreground: #1A1A1A;
+  --card: #ffffff;
+  --card-border: #E5E5E5;
+  --sidebar: #ffffff;
+  --header-border: #E5E5E5;
+  --muted: #F5F5F5;
+  --muted-fg: #737373;
+  --input: #E5E5E5;
+  --input-focus: #0ABAB5;
+}
+
+.dark {
+  --background: #0F0F0F;
+  --foreground: #EDEDED;
+  --card: #1A1A1A;
+  --card-border: #2D2D2D;
+  --sidebar: #141414;
+  --header-border: #2D2D2D;
+  --muted: #1F1F1F;
+  --muted-fg: #9CA3AF;
+  --input: #2D2D2D;
+  --input-focus: #0ABAB5;
 }
 
 @theme inline {
@@ -46,4 +67,45 @@ body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode overrides for specific elements */
+.dark .bg-white {
+  background-color: var(--card);
+}
+.dark .border-gray-200 {
+  border-color: var(--card-border);
+}
+.dark .border-gray-100 {
+  border-color: var(--card-border);
+}
+.dark .text-charcoal {
+  color: var(--foreground);
+}
+.dark .bg-gray-50 {
+  background-color: var(--muted);
+}
+.dark .hover\:bg-gray-50:hover {
+  background-color: var(--muted);
+}
+.dark .text-gray-500 {
+  color: var(--muted-fg);
+}
+.dark .text-gray-600 {
+  color: #D1D5DB;
+}
+.dark .text-gray-700 {
+  color: #E5E7EB;
+}
+.dark .text-gray-400 {
+  color: var(--muted-fg);
+}
+.dark .text-\[\#737373\] {
+  color: #D1D5DB;
+}
+.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--card-border);
+}
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--card-border);
 }

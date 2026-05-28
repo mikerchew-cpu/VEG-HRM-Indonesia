@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Providers } from "@/providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,8 +19,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${inter.className} h-full antialiased`}>
-      <body className="min-h-full bg-gray-50 text-charcoal">{children}</body>
+    <html lang="id" className={`${inter.className} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('veg-hrm-theme') || 'light';
+                  var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  if (isDark) document.documentElement.classList.add('dark');
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full bg-[var(--background)] text-[var(--foreground)]">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

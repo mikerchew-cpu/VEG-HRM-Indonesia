@@ -1,0 +1,140 @@
+export const id = {
+  // Navigation
+  "nav.dashboard": "Dashboard",
+  "nav.employees": "Karyawan",
+  "nav.attendance": "Absensi",
+  "nav.payroll": "Penggajian",
+  "nav.compliance": "Kepatuhan",
+  "nav.reports": "Laporan AI",
+  "nav.settings": "Pengaturan",
+
+  // Header
+  "header.welcome": "Selamat datang",
+  "header.signout": "Keluar",
+  "header.signingout": "Keluar...",
+
+  // Login
+  "login.title": "Sign In",
+  "login.subtitle": "Masuk ke dashboard HRM Anda",
+  "login.email": "Email",
+  "login.password": "Password",
+  "login.signin": "Sign In",
+  "login.processing": "Memproses...",
+  "login.error.invalid": "Email atau password salah. Silakan coba lagi.",
+  "login.error.connection": "Gagal terhubung ke server. Periksa koneksi Anda.",
+  "login.brand.title": "VEG HRM",
+  "login.brand.subtitle": "Indonesia Mining Industry",
+  "login.brand.quote": "Mengelola SDM tambang dari pit hingga kantor pusat — patuh regulasi, akurat, dan terintegrasi.",
+
+  // Employees
+  "employees.title": "Karyawan",
+  "employees.subtitle": "Kelola data seluruh karyawan",
+  "employees.add": "Tambah Karyawan",
+  "employees.search": "Cari nama, NIK, atau posisi...",
+  "employees.total": "Total Karyawan",
+  "employees.active": "Aktif",
+  "employees.pkwt": "Kontrak (PKWT)",
+  "employees.pkwtt": "Tetap (PKWTT)",
+  "employees.code": "Kode",
+  "employees.name": "Nama",
+  "employees.position": "Posisi",
+  "employees.department": "Departemen",
+  "employees.site": "Site",
+  "employees.status": "Status",
+  "employees.salary": "Gaji Pokok",
+  "employees.action": "Aksi",
+  "employees.detail": "Detail",
+  "employees.all": "Semua",
+
+  // Add Employee
+  "emp.add.title": "Tambah Karyawan Baru",
+  "emp.add.subtitle": "Lengkapi seluruh data sesuai dokumen resmi karyawan",
+  "emp.add.save": "Simpan Karyawan",
+  "emp.add.cancel": "Batal",
+  "emp.section.personal": "Data Pribadi",
+  "emp.section.tax": "Data Perpajakan",
+  "emp.section.bpjs": "Data BPJS",
+  "emp.section.employment": "Data Kepegawaian",
+  "emp.section.compensation": "Data Kompensasi",
+  "emp.section.certification": "Sertifikasi Mining",
+  "emp.section.emergency": "Kontak Darurat",
+
+  // Attendance
+  "attendance.title": "Absensi & Kehadiran",
+  "attendance.subtitle": "Kelola shift, rotasi, lembur, dan kehadiran pekerja tambang",
+  "attendance.present": "Hadir Hari Ini",
+  "attendance.late": "Terlambat",
+  "attendance.leave": "Izin / Sakit",
+  "attendance.absent": "Tidak Hadir",
+  "attendance.shift": "Pola Shift & Rotasi",
+  "attendance.overtime": "Perhitungan Lembur (UU Cipta Kerja)",
+  "attendance.offline": "Absensi Offline",
+  "attendance.offline.desc": "Di area tambang terpencil, absensi tetap terekam via GPS + face recognition. Data akan sinkron otomatis saat koneksi tersedia.",
+
+  // Payroll
+  "payroll.title": "Penggajian",
+  "payroll.subtitle": "Payroll, PPh 21 TER, BPJS, THR — patuh regulasi Indonesia",
+  "payroll.gross": "Total Bruto",
+  "payroll.pph21": "Total Potongan PPh 21",
+  "payroll.bpjs": "Total BPJS (Pekerja)",
+  "payroll.net": "Total Netto",
+  "payroll.run": "Run Slip Gaji",
+  "payroll.ter": "PPh 21 TER",
+  "payroll.bpjs.label": "BPJS",
+  "payroll.thr": "THR",
+
+  // Compliance
+  "compliance.title": "Kepatuhan Regulasi",
+  "compliance.subtitle": "Compliance terhadap UU Ketenagakerjaan, Pajak, BPJS, dan regulasi mining",
+  "compliance.score": "Compliance Score",
+  "compliance.critical": "Critical Issues",
+  "compliance.warning": "Warnings",
+  "compliance.ok": "Compliant Items",
+  "compliance.overview": "Ringkasan Kepatuhan",
+  "compliance.ump": "UMP/UMR 2025",
+  "compliance.cert": "Sertifikasi Mining",
+  "compliance.smk3": "SMK3 & K3",
+
+  // Reports
+  "reports.title": "Laporan AI",
+  "reports.subtitle": "Analisis otomatis & rekomendasi — didukung DeepSeek, Claude, dan Gemini",
+  "reports.generate": "Generate Baru",
+  "reports.saved": "Laporan Tersimpan",
+  "reports.settings": "Pengaturan AI",
+  "reports.config": "Konfigurasi Report",
+  "reports.type": "Jenis Laporan",
+  "reports.period": "Periode",
+  "reports.model": "AI Model",
+  "reports.btn": "Generate Report",
+  "reports.result": "Hasil Report",
+
+  // Settings
+  "settings.title": "Pengaturan",
+  "settings.subtitle": "Profil perusahaan, referensi UMP/UMR, dan manajemen pengguna",
+  "settings.company": "Profil Perusahaan",
+  "settings.ump": "Referensi UMP/UMR",
+  "settings.users": "Pengguna",
+  "settings.ai": "AI Providers",
+  "settings.save": "Simpan",
+
+  // Theme
+  "theme.light": "Terang",
+  "theme.dark": "Gelap",
+  "theme.system": "Sistem",
+  "language.en": "English",
+  "language.id": "Indonesia",
+
+  // Common
+  "common.loading": "Memuat...",
+  "common.error": "Error",
+  "common.success": "Berhasil",
+  "common.back": "Kembali",
+  "common.edit": "Edit",
+  "common.delete": "Hapus",
+  "common.search": "Cari",
+  "common.filter": "Filter",
+  "common.export": "Ekspor",
+  "common.print": "Cetak",
+};
+
+export type TranslationKeys = keyof typeof id;

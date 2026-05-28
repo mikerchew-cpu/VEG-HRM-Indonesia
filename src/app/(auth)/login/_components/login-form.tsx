@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLanguage } from "@/providers/language-provider";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t, setLang, lang } = useLanguage();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,36 +28,56 @@ export function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(
-          data.error === "Invalid login credentials"
-            ? "Email atau password salah. Silakan coba lagi."
-            : data.error || "Login gagal"
-        );
+        setError(data.error === "Invalid login credentials"
+          ? t("login.error.invalid")
+          : data.error || t("login.error.connection"));
         setLoading(false);
         return;
       }
 
-      const redirect = searchParams.get("redirect") || "/";
-      router.push(redirect);
+      router.push(searchParams.get("redirect") || "/");
       router.refresh();
     } catch {
-      setError("Gagal terhubung ke server. Periksa koneksi Anda.");
+      setError(t("login.error.connection"));
       setLoading(false);
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="flex justify-end gap-1 mb-2">
+        <button
+          type="button"
+          onClick={() => setLang("id")}
+          className={`text-xs px-2 py-1 rounded transition-colors ${
+            lang === "id"
+              ? "bg-tiffany text-white"
+              : "text-[var(--muted-fg)] hover:bg-[var(--muted)]"
+          }`}
+        >
+          🇮🇩 Indonesia
+        </button>
+        <button
+          type="button"
+          onClick={() => setLang("en")}
+          className={`text-xs px-2 py-1 rounded transition-colors ${
+            lang === "en"
+              ? "bg-tiffany text-white"
+              : "text-[var(--muted-fg)] hover:bg-[var(--muted)]"
+          }`}
+        >
+          🇬🇧 English
+        </button>
+      </div>
+
       <div className="text-center mb-2">
-        <h2 className="text-xl font-semibold text-charcoal">Sign In</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Masuk ke dashboard HRM Anda
-        </p>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">{t("login.title")}</h2>
+        <p className="text-sm text-[var(--muted-fg)] mt-1">{t("login.subtitle")}</p>
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Email
+        <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
+          {t("login.email")}
         </label>
         <input
           id="email"
@@ -64,16 +86,16 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm 
-                     focus:outline-none focus:ring-2 focus:ring-tiffany focus:border-transparent
-                     placeholder:text-gray-400"
+          className="w-full px-4 py-2.5 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm
+                     focus:outline-none focus:ring-2 focus:ring-[var(--input-focus)] focus:border-transparent
+                     placeholder:text-[var(--muted-fg)]"
           placeholder="admin@perusahaan-tambang.com"
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Password
+        <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
+          {t("login.password")}
         </label>
         <input
           id="password"
@@ -82,15 +104,15 @@ export function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm 
-                     focus:outline-none focus:ring-2 focus:ring-tiffany focus:border-transparent
-                     placeholder:text-gray-400"
+          className="w-full px-4 py-2.5 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm
+                     focus:outline-none focus:ring-2 focus:ring-[var(--input-focus)] focus:border-transparent
+                     placeholder:text-[var(--muted-fg)]"
           placeholder="••••••••"
         />
       </div>
 
       {error && (
-        <div className="text-sm text-danger bg-red-50 border border-red-100 px-4 py-3 rounded-lg">
+        <div className="text-sm text-danger bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/30 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -98,8 +120,8 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-2.5 bg-tiffany text-white font-medium rounded-lg text-sm 
-                   hover:bg-tiffany-dark transition-colors disabled:opacity-50 
+        className="w-full py-2.5 bg-tiffany text-white font-medium rounded-lg text-sm
+                   hover:bg-tiffany-dark transition-colors disabled:opacity-50
                    disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {loading ? (
@@ -108,10 +130,10 @@ export function LoginForm() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Memproses...
+            {t("login.processing")}
           </>
         ) : (
-          "Sign In"
+          t("login.signin")
         )}
       </button>
     </form>
