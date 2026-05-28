@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/providers/language-provider";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -93,23 +94,15 @@ export function LoginForm() {
         />
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
-          {t("login.password")}
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          autoComplete="current-password"
-          className="w-full px-4 py-2.5 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm
-                     focus:outline-none focus:ring-2 focus:ring-[var(--input-focus)] focus:border-transparent
-                     placeholder:text-[var(--muted-fg)]"
-          placeholder="••••••••"
-        />
-      </div>
+      <PasswordInput
+        id="password"
+        label={t("login.password")}
+        value={password}
+        onChange={setPassword}
+        required
+        autoComplete="current-password"
+        placeholder="••••••••"
+      />
 
       {error && (
         <div className="text-sm text-danger bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/30 px-4 py-3 rounded-lg">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { PasswordInput } from "@/components/ui/password-input";
 import { UMP_2025 } from "@/lib/constants/compliance";
 
 const COMPANY = {
@@ -247,37 +248,31 @@ export default function SettingsPage() {
             }
             setPwLoading(false);
           }} className="space-y-4 max-w-md">
-            <div>
-              <label className="block text-xs font-medium text-[var(--muted-fg)] mb-1">Password Saat Ini</label>
-              <input
-                type="password"
-                value={pwData.current}
-                onChange={(e) => setPwData((p) => ({ ...p, current: e.target.value }))}
-                required
-                className="w-full px-3 py-2 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-tiffany"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[var(--muted-fg)] mb-1">Password Baru</label>
-              <input
-                type="password"
-                value={pwData.newPass}
-                onChange={(e) => setPwData((p) => ({ ...p, newPass: e.target.value }))}
-                required
-                minLength={6}
-                className="w-full px-3 py-2 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-tiffany"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[var(--muted-fg)] mb-1">Konfirmasi Password Baru</label>
-              <input
-                type="password"
-                value={pwData.confirm}
-                onChange={(e) => setPwData((p) => ({ ...p, confirm: e.target.value }))}
-                required
-                className="w-full px-3 py-2 border border-[var(--input)] bg-[var(--card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-tiffany"
-              />
-            </div>
+            <PasswordInput
+              id="pw-current"
+              label="Password Saat Ini"
+              value={pwData.current}
+              onChange={(v) => setPwData((p) => ({ ...p, current: v }))}
+              required
+              autoComplete="current-password"
+            />
+            <PasswordInput
+              id="pw-new"
+              label="Password Baru"
+              value={pwData.newPass}
+              onChange={(v) => setPwData((p) => ({ ...p, newPass: v }))}
+              required
+              autoComplete="new-password"
+              placeholder="Minimal 6 karakter"
+            />
+            <PasswordInput
+              id="pw-confirm"
+              label="Konfirmasi Password Baru"
+              value={pwData.confirm}
+              onChange={(v) => setPwData((p) => ({ ...p, confirm: v }))}
+              required
+              autoComplete="new-password"
+            />
             <button
               type="submit"
               disabled={pwLoading}
