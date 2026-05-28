@@ -134,62 +134,61 @@ export default function EmployeesPage() {
         ))}
       </div>
 
-      {/* Employee table */}
-      <Card className="p-0 overflow-hidden">
+      {/* Employee table - desktop */}
+      <Card className="p-0 overflow-hidden hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase">Kode</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase">Nama</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase">Posisi</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase">Departemen</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase">Site</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase">Status</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600 text-xs uppercase">Gaji Pokok</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase">Aksi</th>
+              <tr className="bg-[var(--muted)] border-b border-[var(--card-border)]">
+                <th className="text-left px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Kode</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Nama</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Posisi</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Departemen</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Site</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Status</th>
+                <th className="text-right px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Gaji</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--muted-fg)] text-xs uppercase">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[var(--card-border)]">
               {filtered.map((emp) => (
-                <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-mono text-xs text-gray-500">{emp.employee_code}</td>
+                <tr key={emp.id} className="hover:bg-[var(--muted)] transition-colors">
+                  <td className="px-4 py-3 font-mono text-xs text-[var(--muted-fg)]">{emp.employee_code}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-tiffany-light rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-tiffany-light rounded-full flex items-center justify-center shrink-0">
                         <span className="text-xs font-medium text-tiffany-dark">
                           {emp.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                         </span>
                       </div>
-                      <div>
-                        <p className="font-medium text-charcoal">{emp.full_name}</p>
-                        <p className="text-xs text-gray-400">NIK: {emp.nik}</p>
+                      <div className="min-w-0">
+                        <p className="font-medium text-[var(--foreground)] truncate">{emp.full_name}</p>
+                        <p className="text-xs text-[var(--muted-fg)] truncate">NIK: {emp.nik}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-700">{emp.position}</td>
+                  <td className="px-4 py-3 text-[var(--foreground)] text-sm">{emp.position}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">{emp.department}</span>
+                    <span className="px-2 py-0.5 bg-[var(--muted)] text-[var(--muted-fg)] rounded text-xs">{emp.department}</span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500">{emp.site_id}</td>
+                  <td className="px-4 py-3 text-xs text-[var(--muted-fg)] max-w-[120px] truncate">{emp.site_id}</td>
                   <td className="px-4 py-3">
-                    {emp.status === "active" ? (
-                      <span className="px-2 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium">Aktif</span>
-                    ) : emp.status === "suspended" ? (
-                      <span className="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded text-xs font-medium">Nonaktif</span>
-                    ) : (
-                      <span className="px-2 py-0.5 bg-red-50 text-red-700 rounded text-xs font-medium">Resign</span>
-                    )}
-                    <span className="ml-1.5 text-xs text-gray-400">
-                      {EMPLOYMENT_STATUSES[emp.employment_status as keyof typeof EMPLOYMENT_STATUSES]?.label.split(" (")[0]}
-                    </span>
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${
+                        emp.status === "active" ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                        emp.status === "suspended" ? "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                        "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                      }`}>
+                        {emp.status === "active" ? "Aktif" : emp.status === "suspended" ? "Nonaktif" : "Resign"}
+                      </span>
+                      <span className="text-xs text-[var(--muted-fg)]">
+                        {EMPLOYMENT_STATUSES[emp.employment_status as keyof typeof EMPLOYMENT_STATUSES]?.label.split(" (")[0]}
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-charcoal">{formatRupiah(emp.base_salary)}</td>
+                  <td className="px-4 py-3 text-right font-medium text-[var(--foreground)] whitespace-nowrap">{formatRupiah(emp.base_salary)}</td>
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/employees/${emp.id}`}
-                      className="text-tiffany hover:text-tiffany-dark text-xs font-medium"
-                    >
+                    <Link href={`/employees/${emp.id}`} className="text-tiffany hover:text-tiffany-dark text-xs font-medium">
                       Detail
                     </Link>
                   </td>
@@ -199,6 +198,52 @@ export default function EmployeesPage() {
           </table>
         </div>
       </Card>
+
+      {/* Employee cards - mobile */}
+      <div className="space-y-3 md:hidden">
+        {filtered.map((emp) => (
+          <Link key={emp.id} href={`/employees/${emp.id}`} className="block">
+            <Card className="p-4 active:scale-[0.99] transition-transform">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-tiffany-light rounded-full flex items-center justify-center shrink-0">
+                  <span className="text-sm font-medium text-tiffany-dark">
+                    {emp.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-[var(--foreground)] text-sm truncate">{emp.full_name}</p>
+                  <p className="text-xs text-[var(--muted-fg)] truncate">{emp.position}</p>
+                </div>
+                <svg className="w-4 h-4 text-[var(--muted-fg)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="text-[var(--muted-fg)]">Dept:</span>
+                  <span className="text-[var(--foreground)] ml-1">{emp.department}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--muted-fg)]">Site:</span>
+                  <span className="text-[var(--foreground)] ml-1 truncate">{emp.site_id}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--muted-fg)]">Status:</span>
+                  <span className={`ml-1 font-medium ${
+                    emp.status === "active" ? "text-green-600" : emp.status === "suspended" ? "text-yellow-600" : "text-red-600"
+                  }`}>
+                    {emp.status === "active" ? "Aktif" : emp.status === "suspended" ? "Nonaktif" : "Resign"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[var(--muted-fg)]">Gaji:</span>
+                  <span className="text-[var(--foreground)] ml-1 font-medium">{formatRupiah(emp.base_salary)}</span>
+                </div>
+              </div>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
