@@ -10,9 +10,14 @@ interface ThemeCtx {
   setTheme: (t: Theme) => void;
 }
 
-const ThemeContext = createContext<ThemeCtx | null>(null);
+const ThemeContext = createContext<ThemeCtx>({
+  theme: "light",
+  resolved: "light",
+  setTheme: () => {},
+});
 
 function resolveTheme(theme: Theme): "light" | "dark" {
+  if (typeof window === "undefined") return "light";
   if (theme === "system") {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
@@ -40,7 +45,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle("dark", resolveTheme(t) === "dark");
   }, []);
 
-  // Listen for system theme changes
   useEffect(() => {
     if (theme !== "system") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -53,10 +57,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => mq.removeEventListener("change", handler);
   }, [theme]);
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   return (
     <ThemeContext.Provider value={{ theme, resolved, setTheme }}>
       {children}
@@ -65,7 +65,5 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 }
 
 export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
-  return ctx;
+  return useContext(ThemeContext);
 }

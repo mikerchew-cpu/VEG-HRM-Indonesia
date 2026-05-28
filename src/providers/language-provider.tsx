@@ -15,7 +15,14 @@ interface LanguageCtx {
   t: (key: TranslationKeys) => string;
 }
 
-const LanguageContext = createContext<LanguageCtx | null>(null);
+const defaultLang: Language = "id";
+const defaultT = (key: TranslationKeys) => translations[defaultLang]?.[key] ?? key;
+
+const LanguageContext = createContext<LanguageCtx>({
+  lang: defaultLang,
+  setLang: () => {},
+  t: defaultT,
+});
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>("id");
@@ -38,10 +45,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [lang]
   );
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
       {children}
@@ -50,7 +53,5 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 }
 
 export function useLanguage() {
-  const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error("useLanguage must be used within LanguageProvider");
-  return ctx;
+  return useContext(LanguageContext);
 }
