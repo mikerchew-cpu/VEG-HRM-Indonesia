@@ -1,7 +1,8 @@
 {
-  "name": "veg-hrm-tmp",
-  "version": "0.1.0",
+  "name": "veg-hrm-indonesia",
+  "version": "1.0.0",
   "private": true,
+  "description": "HRM system for Indonesian mining industry — compliant with UU Cipta Kerja, BPJS, PPh 21 TER, and Permen ESDM",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
