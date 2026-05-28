@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -11,28 +10,38 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createClient();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (error) {
-      setError(error.message);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(
+          data.error === "Invalid login credentials"
+            ? "Email atau password salah. Silakan coba lagi."
+            : data.error || "Login gagal"
+        );
+        setLoading(false);
+        return;
+      }
+
+      const redirect = searchParams.get("redirect") || "/";
+      router.push(redirect);
+      router.refresh();
+    } catch {
+      setError("Gagal terhubung ke server. Periksa koneksi Anda.");
       setLoading(false);
-      return;
     }
-
-    // Redirect back to original path or dashboard
-    const redirect = searchParams.get("redirect") || "/";
-    router.push(redirect);
-    router.refresh();
   }
 
   return (
@@ -82,9 +91,7 @@ export function LoginForm() {
 
       {error && (
         <div className="text-sm text-danger bg-red-50 border border-red-100 px-4 py-3 rounded-lg">
-          {error === "Invalid login credentials"
-            ? "Email atau password salah. Silakan coba lagi."
-            : error}
+          {error}
         </div>
       )}
 
