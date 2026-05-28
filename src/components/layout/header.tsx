@@ -83,14 +83,14 @@ export function Header() {
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowTheme(false)} />
               <div className="absolute right-0 mt-1 w-36 bg-[var(--card)] border border-[var(--card-border)] rounded-lg shadow-lg z-20 py-1">
-                {(["light", "dark", "system"] as const).map((t) => (
+                {(["light", "dark", "system"] as const).map((mode) => (
                   <button
-                    key={t}
-                    onClick={() => { setTheme(t); setShowTheme(false); }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === t ? "text-tiffany font-medium" : "text-[var(--foreground)]"}`}
+                    key={mode}
+                    onClick={() => { setTheme(mode); setShowTheme(false); }}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === mode ? "text-tiffany font-medium" : "text-[var(--foreground)]"}`}
                   >
-                    <span>{t === "light" ? "☀️" : t === "dark" ? "🌙" : "💻"}</span>
-                    {t === "light" ? t("theme.light") : t === "dark" ? t("theme.dark") : t("theme.system")}
+                    <span>{mode === "light" ? "☀️" : mode === "dark" ? "🌙" : "💻"}</span>
+                    {mode === "light" ? t("theme.light") : mode === "dark" ? t("theme.dark") : t("theme.system")}
                   </button>
                 ))}
               </div>
