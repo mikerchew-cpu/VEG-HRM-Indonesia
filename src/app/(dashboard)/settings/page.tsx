@@ -15,7 +15,36 @@ const COMPANY = {
 };
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<"company" | "ump" | "users">("company");
+  const [activeTab, setActiveTab] = useState<"company" | "ump" | "users" | "ai">("company");
+  const [aiKeys, setAiKeys] = useState({
+    deepseek: "",
+    claude: "",
+    gemini: "",
+    custom: "",
+  });
+  const [aiSaving, setAiSaving] = useState(false);
+  const [aiSaved, setAiSaved] = useState(false);
+
+  async function handleAiSave() {
+    setAiSaving(true);
+    setAiSaved(false);
+    try {
+      const res = await fetch("/api/ai/providers/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          DEEPSEEK_API_KEY: aiKeys.deepseek,
+          ANTHROPIC_API_KEY: aiKeys.claude,
+          GEMINI_API_KEY: aiKeys.gemini,
+          CUSTOM_AI_ENDPOINT: aiKeys.custom,
+        }),
+      });
+      if (res.ok) setAiSaved(true);
+    } catch {
+      // fallback
+    }
+    setAiSaving(false);
+  }
 
   return (
     <div className="space-y-6">
@@ -31,6 +60,7 @@ export default function SettingsPage() {
           { id: "company" as const, label: "Profil Perusahaan" },
           { id: "ump" as const, label: "Referensi UMP/UMR" },
           { id: "users" as const, label: "Pengguna" },
+          { id: "ai" as const, label: "AI Providers" },
         ].map((t) => (
           <button
             key={t.id}
@@ -165,6 +195,69 @@ export default function SettingsPage() {
           <button className="mt-4 w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-400 hover:border-tiffany hover:text-tiffany transition-colors">
             + Tambah Pengguna
           </button>
+        </Card>
+      )}
+
+      {activeTab === "ai" && (
+        <Card>
+          <h2 className="text-sm font-semibold text-charcoal mb-1">AI Provider Configuration</h2>
+          <p className="text-xs text-gray-500 mb-4">
+            Masukkan API key untuk mengaktifkan AI analysis & recommendation engine
+          </p>
+
+          <div className="space-y-4">
+            {[
+              { key: "deepseek", label: "DeepSeek", envKey: "DEEPSEEK_API_KEY", placeholder: "sk-...", doc: "https://platform.deepseek.com/api_keys" },
+              { key: "claude", label: "Claude (Anthropic)", envKey: "ANTHROPIC_API_KEY", placeholder: "sk-ant-...", doc: "https://console.anthropic.com/settings/keys" },
+              { key: "gemini", label: "Gemini (Google)", envKey: "GEMINI_API_KEY", placeholder: "AIza...", doc: "https://aistudio.google.com/app/apikey" },
+              { key: "custom", label: "Custom / Ollama (Local)", envKey: "CUSTOM_AI_ENDPOINT", placeholder: "http://192.168.x.x:11434", doc: "https://ollama.ai" },
+            ].map((p) => (
+              <div key={p.key} className="p-4 border border-gray-200 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <span className="text-sm font-medium text-charcoal">{p.label}</span>
+                    <a href={p.doc} target="_blank" rel="noopener noreferrer" className="ml-2 text-xs text-tiffany hover:underline">
+                      Get API Key
+                    </a>
+                  </div>
+                  <span className={`text-xs px-2 py-0.5 rounded font-medium ${
+                    aiKeys[p.key as keyof typeof aiKeys] ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-400"
+                  }`}>
+                    {aiKeys[p.key as keyof typeof aiKeys] ? "Configured" : "Not set"}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="password"
+                    value={aiKeys[p.key as keyof typeof aiKeys]}
+                    onChange={(e) => setAiKeys((prev) => ({ ...prev, [p.key]: e.target.value }))}
+                    placeholder={p.placeholder}
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-tiffany font-mono"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
+            {aiSaved && (
+              <span className="text-xs text-tiffany font-medium">✓ API keys saved to environment</span>
+            )}
+            <button
+              onClick={handleAiSave}
+              disabled={aiSaving}
+              className="ml-auto px-4 py-2 bg-tiffany text-white text-sm rounded-lg hover:bg-tiffany-dark disabled:opacity-50"
+            >
+              {aiSaving ? "Saving..." : "Save API Keys"}
+            </button>
+          </div>
+
+          <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
+            <p className="text-xs text-yellow-700">
+              <strong>Note:</strong> API keys are stored as Vercel environment variables. In production,
+              you must redeploy for changes to take effect. For local development, add them to your .env.local file.
+            </p>
+          </div>
         </Card>
       )}
     </div>

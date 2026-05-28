@@ -36,8 +36,8 @@ const MOCK_REPORTS = [
 ];
 
 const AI_PROVIDERS = [
-  { id: "deepseek", name: "DeepSeek", model: "deepseek-chat", color: "bg-blue-500", available: true },
-  { id: "claude", name: "Claude", model: "claude-sonnet-4", color: "bg-orange-500", available: true },
+  { id: "deepseek", name: "DeepSeek", model: "deepseek-chat", color: "bg-blue-500", available: !!process.env.NEXT_PUBLIC_DEEPSEEK_CONFIGURED || true },
+  { id: "claude", name: "Claude", model: "claude-sonnet-4-20250514", color: "bg-orange-500", available: true },
   { id: "gemini", name: "Gemini", model: "gemini-2.5-flash", color: "bg-purple-500", available: true },
   { id: "custom", name: "Custom (Ollama)", model: "llama3", color: "bg-gray-500", available: false },
 ];
@@ -49,15 +49,40 @@ export default function ReportsPage() {
   const [generating, setGenerating] = useState(false);
   const [generatedReport, setGeneratedReport] = useState<string | null>(null);
 
-  function handleGenerate() {
+  async function handleGenerate() {
     setGenerating(true);
-    setTimeout(() => {
-      setGenerating(false);
-      const report = REPORT_TYPES.find((r) => r.id === selectedReport);
-      setGeneratedReport(
-        `✅ ${report?.label} (${report?.provider}) berhasil digenerate.\n\nPeriode: Mei 2026\nAI Model: ${AI_PROVIDERS.find((p) => p.id === selectedProvider)?.name} (${AI_PROVIDERS.find((p) => p.id === selectedProvider)?.model})\nWaktu: ~32 detik\nToken: ~2,450\n\nRingkasan:\nTidak ada anomali signifikan ditemukan pada periode ini. BPJS compliance 100%, payroll variance dalam batas wajar (2.3%). Direkomendasikan monitoring berkala pada Site B untuk overtime cost.`
-      );
-    }, 2000);
+    setGeneratedReport(null);
+
+    try {
+      const reportType = REPORT_TYPES.find((r) => r.id === selectedReport);
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider: selectedProvider,
+          reportType: selectedReport,
+          data: `Generate ${reportType?.label} untuk periode Mei 2026. Data tersedia: 8 karyawan, 5 site, payroll Rp 41M gross.`,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        setGeneratedReport(`⚠️ Error: ${data.error}`);
+      } else {
+        const provider = AI_PROVIDERS.find((p) => p.id === data.provider);
+        setGeneratedReport(
+          `✅ ${reportType?.label} berhasil digenerate\n\n` +
+          `AI Model: ${provider?.name} (${data.model})\n` +
+          `Waktu: ${(data.responseTimeMs / 1000).toFixed(1)} detik\n` +
+          `Token: ${data.tokensUsed.toLocaleString()}\n\n` +
+          `---\n\n${data.content}`
+        );
+      }
+    } catch (err) {
+      setGeneratedReport(`⚠️ Gagal terhubung ke AI: ${err instanceof Error ? err.message : "Unknown error"}`);
+    }
+
+    setGenerating(false);
   }
 
   return (
