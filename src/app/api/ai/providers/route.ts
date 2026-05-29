@@ -33,21 +33,32 @@ export async function POST(req: NextRequest) {
 
     const key = apiKey || process.env[cfg.envKey];
     if (!key) {
-      return NextResponse.json({ connected: false, error: "API key not provided" });
+      return NextResponse.json({ connected: false, error: "API key not provided. Enter a key or save one first." });
     }
 
     let connected = false;
     let model = "";
     let error: string | null = null;
+    const keyPrefix = key.slice(0, 8) + "..." + key.slice(-4);
 
     try {
       switch (provider) {
         case "deepseek": {
-          const res = await fetch(`${cfg.baseUrl}/models`, {
-            headers: { Authorization: `Bearer ${key}` },
+          // Use chat completion with minimal tokens to validate key
+          const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+            body: JSON.stringify({
+              model: cfg.defaultModel,
+              messages: [{ role: "user", content: "ping" }],
+              max_tokens: 1,
+            }),
           });
           connected = res.ok;
-          if (!res.ok) error = `HTTP ${res.status}`;
+          if (!res.ok) {
+            const body = await res.text().catch(() => "");
+            error = `HTTP ${res.status}: ${body.slice(0, 150)}`;
+          }
           break;
         }
         case "claude": {
@@ -65,29 +76,52 @@ export async function POST(req: NextRequest) {
             }),
           });
           connected = res.ok;
-          if (!res.ok) error = `HTTP ${res.status}`;
+          if (!res.ok) {
+            const body = await res.text().catch(() => "");
+            error = `HTTP ${res.status}: ${body.slice(0, 150)}`;
+          }
           break;
         }
         case "gemini": {
-          const res = await fetch(`${cfg.baseUrl}/models?key=${key}`, {
+          const res = await fetch(`${cfg.baseUrl}/models/${cfg.defaultModel}:generateContent?key=${key}`, {
+            method: "POST",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: "ping" }] }],
+              generationConfig: { maxOutputTokens: 1 },
+            }),
           });
           connected = res.ok;
-          if (!res.ok) error = `HTTP ${res.status}`;
+          if (!res.ok) {
+            const body = await res.text().catch(() => "");
+            error = `HTTP ${res.status}: ${body.slice(0, 150)}`;
+          }
           break;
         }
         case "qwen": {
-          const res = await fetch(`${cfg.baseUrl}/models`, {
-            headers: { Authorization: `Bearer ${key}` },
+          const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+            body: JSON.stringify({
+              model: cfg.defaultModel,
+              messages: [{ role: "user", content: "ping" }],
+              max_tokens: 1,
+            }),
           });
           connected = res.ok;
-          if (!res.ok) error = `HTTP ${res.status}`;
+          if (!res.ok) {
+            const body = await res.text().catch(() => "");
+            error = `HTTP ${res.status}: ${body.slice(0, 150)}`;
+          }
           break;
         }
         case "custom": {
           const res = await fetch(`${key}/api/tags`);
           connected = res.ok;
-          if (!res.ok) error = `HTTP ${res.status}`;
+          if (!res.ok) {
+            const body = await res.text().catch(() => "");
+            error = `HTTP ${res.status}: ${body.slice(0, 150)}`;
+          }
           break;
         }
       }
@@ -99,6 +133,7 @@ export async function POST(req: NextRequest) {
       provider: cfg.name,
       connected,
       model: model || cfg.defaultModel,
+      keyPrefix,
       error,
     });
   } catch (e) {
