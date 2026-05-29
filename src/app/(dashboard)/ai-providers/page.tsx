@@ -22,6 +22,7 @@ export default function AiProvidersPage() {
   const [loading, setLoading] = useState(true);
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
   const [testResults, setTestResults] = useState<Record<string, { testing: boolean; connected?: boolean; error?: string }>>({});
+  const [saveMsg, setSaveMsg] = useState<{ id: string; type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/ai/providers")
@@ -34,19 +35,44 @@ export default function AiProvidersPage() {
   }, []);
 
   async function saveKey(id: string) {
-    const key = apiKeys[id];
-    if (!key) return;
+    const key = apiKeys[id]?.trim();
+    if (!key) {
+      setSaveMsg({ id, type: "error", text: lang === "id" ? "Masukkan API key terlebih dahulu" : "Enter an API key first" });
+      return;
+    }
 
-    // Save via API (stores to process.env for session, instructions for production)
-    await fetch("/api/ai/providers/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [PROVIDER_MAP[id]?.envKey || id.toUpperCase() + "_API_KEY"]: key }),
-    });
+    setSaveMsg({ id, type: "success", text: lang === "id" ? "Menyimpan..." : "Saving..." });
 
-    setProviders((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, configured: true, maskedKey: key.slice(0, 6) + "••••" + key.slice(-4) } : p))
-    );
+    try {
+      const envKey = PROVIDER_MAP[id]?.envKey || id.toUpperCase() + "_API_KEY";
+      const res = await fetch("/api/ai/providers/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [envKey]: key }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        setSaveMsg({ id, type: "error", text: data.error || `HTTP ${res.status}` });
+        return;
+      }
+
+      setProviders((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, configured: true, maskedKey: key.slice(0, 6) + "••••" + key.slice(-4) } : p))
+      );
+      setApiKeys((prev) => ({ ...prev, [id]: "" }));
+      setSaveMsg({
+        id,
+        type: "success",
+        text: data.persisted?.length
+          ? (lang === "id" ? "✓ Tersimpan ke Vercel. Redeploy untuk production." : "✓ Saved to Vercel. Redeploy for production.")
+          : (lang === "id" ? "✓ Tersimpan (session)" : "✓ Saved (session)"),
+      });
+    } catch (e) {
+      setSaveMsg({ id, type: "error", text: e instanceof Error ? e.message : "Network error" });
+    }
+
+    setTimeout(() => setSaveMsg(null), 5000);
   }
 
   async function testConnection(id: string) {
@@ -186,6 +212,17 @@ export default function AiProvidersPage() {
                     {lang === "id" ? "Dapatkan API key →" : "Get API key →"}
                   </a>
                 </div>
+
+                {/* Save status */}
+                {saveMsg?.id === p.id && (
+                  <div className={`text-xs px-3 py-2 rounded-lg ${
+                    saveMsg.type === "success"
+                      ? "bg-tiffany-light text-tiffany-dark"
+                      : "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400"
+                  }`}>
+                    {saveMsg.text}
+                  </div>
+                )}
 
                 {/* Actions */}
                 <div className="flex items-center gap-3 pt-2">

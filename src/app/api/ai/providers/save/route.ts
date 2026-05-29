@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const vercelToken = process.env.VERCEL_TOKEN;
     const projectId = process.env.VERCEL_PROJECT_ID;
     const teamId = process.env.VERCEL_TEAM_ID;
-    const results: { key: string; status: number; ok: boolean }[] = [];
+    const results: Record<string, unknown>[] = [];
 
     for (const [key, value] of Object.entries(keys)) {
       if (!value || typeof value !== "string" || !value.trim()) continue;
@@ -36,46 +36,56 @@ export async function POST(req: NextRequest) {
         );
 
         let res;
-        if (existing) {
-          // Update existing
-          res = await fetch(
-            `https://api.vercel.com/v1/projects/${projectId}/env/${existing.id}${
-              teamId ? `?teamId=${teamId}` : ""
-            }`,
-            {
-              method: "PATCH",
+        let errorDetail = "";
+
+        try {
+          if (existing) {
+            res = await fetch(
+              `https://api.vercel.com/v1/projects/${projectId}/env/${existing.id}${
+                teamId ? `?teamId=${teamId}` : ""
+              }`,
+              {
+                method: "PATCH",
+                headers: {
+                  Authorization: `Bearer ${vercelToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  value: value.trim(),
+                  target: ["production"],
+                  type: "encrypted",
+                }),
+              }
+            );
+          } else {
+            res = await fetch(listUrl, {
+              method: "POST",
               headers: {
                 Authorization: `Bearer ${vercelToken}`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
+                key,
                 value: value.trim(),
                 target: ["production"],
                 type: "encrypted",
               }),
-            }
-          );
-        } else {
-          // Create new
-          res = await fetch(listUrl, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${vercelToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              key,
-              value: value.trim(),
-              target: ["production"],
-              type: "encrypted",
-            }),
-          });
+            });
+          }
+
+          if (!res.ok) {
+            const errBody = await res.text().catch(() => "");
+            errorDetail = `Vercel API (${res.status}): ${errBody.slice(0, 200)}`;
+          }
+        } catch (fetchErr) {
+          errorDetail = `Network error: ${fetchErr instanceof Error ? fetchErr.message : "Unknown"}`;
         }
 
         results.push({
           key,
-          status: res.status,
-          ok: res.ok,
+          status: res?.status ?? 0,
+          ok: res?.ok ?? false,
+          ...(errorDetail ? { error: errorDetail } : {}),
         });
       }
     }
