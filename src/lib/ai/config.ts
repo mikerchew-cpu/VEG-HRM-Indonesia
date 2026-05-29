@@ -7,6 +7,8 @@ export const PROVIDER_CONFIGS: Record<AiProvider, AiProviderConfig> = {
     defaultModel: "deepseek-chat",
     envKey: "DEEPSEEK_API_KEY",
     baseUrl: "https://api.deepseek.com/v1",
+    docsUrl: "https://platform.deepseek.com/api_keys",
+    color: "#4F46E5",
   },
   claude: {
     name: "Claude",
@@ -14,6 +16,8 @@ export const PROVIDER_CONFIGS: Record<AiProvider, AiProviderConfig> = {
     defaultModel: "claude-sonnet-4-20250514",
     envKey: "ANTHROPIC_API_KEY",
     baseUrl: "https://api.anthropic.com/v1",
+    docsUrl: "https://console.anthropic.com/settings/keys",
+    color: "#D97706",
   },
   gemini: {
     name: "Gemini",
@@ -21,13 +25,26 @@ export const PROVIDER_CONFIGS: Record<AiProvider, AiProviderConfig> = {
     defaultModel: "gemini-2.5-flash",
     envKey: "GEMINI_API_KEY",
     baseUrl: "https://generativelanguage.googleapis.com/v1beta",
+    docsUrl: "https://aistudio.google.com/app/apikey",
+    color: "#7C3AED",
+  },
+  qwen: {
+    name: "Qwen",
+    models: ["qwen-max", "qwen-plus", "qwen-turbo"],
+    defaultModel: "qwen-max",
+    envKey: "QWEN_API_KEY",
+    baseUrl: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    docsUrl: "https://bailian.console.aliyun.com/",
+    color: "#2563EB",
   },
   custom: {
     name: "Custom (Ollama)",
-    models: ["llama3", "qwen"],
+    models: ["llama3", "qwen", "mistral"],
     defaultModel: "llama3",
     envKey: "CUSTOM_AI_ENDPOINT",
     baseUrl: "http://localhost:11434",
+    docsUrl: "https://ollama.ai",
+    color: "#6B7280",
   },
 };
 

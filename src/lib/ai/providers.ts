@@ -138,6 +138,37 @@ async function callCustom(req: AiRequest): Promise<AiResponse> {
   };
 }
 
+async function callQwen(req: AiRequest): Promise<AiResponse> {
+  const apiKey = process.env.QWEN_API_KEY;
+  if (!apiKey) throw new Error("QWEN_API_KEY not configured");
+
+  const start = Date.now();
+  const res = await fetch(`${PROVIDER_CONFIGS.qwen.baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: req.model || PROVIDER_CONFIGS.qwen.defaultModel,
+      messages: req.messages,
+      temperature: req.temperature ?? 0.3,
+      max_tokens: req.max_tokens ?? 2048,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Qwen API error (${res.status}): ${err}`);
+  }
+
+  const json = await res.json();
+  return {
+    content: json.choices?.[0]?.message?.content ?? "No response",
+    model: json.model ?? req.model,
+    provider: "qwen",
+    tokensUsed: json.usage?.total_tokens ?? 0,
+    responseTimeMs: Date.now() - start,
+  };
+}
+
 export async function callAi(req: AiRequest): Promise<AiResponse> {
   switch (req.provider) {
     case "deepseek":
@@ -146,6 +177,8 @@ export async function callAi(req: AiRequest): Promise<AiResponse> {
       return callClaude(req);
     case "gemini":
       return callGemini(req);
+    case "qwen":
+      return callQwen(req);
     case "custom":
       return callCustom(req);
     default:

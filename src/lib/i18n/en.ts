@@ -9,6 +9,7 @@ export const en: Record<TranslationKeys, string> = {
   "nav.compliance": "Compliance",
   "nav.helpdesk": "Help Desk",
   "nav.reports": "AI Reports",
+  "nav.ai_providers": "AI Providers",
   "nav.settings": "Settings",
 
   // Header

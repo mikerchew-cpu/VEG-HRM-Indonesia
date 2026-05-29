@@ -13,6 +13,7 @@ const navItemKeys = [
   { label: "nav.compliance", href: "/compliance", icon: "⚖" },
   { label: "nav.helpdesk", href: "/helpdesk", icon: "🎧" },
   { label: "nav.reports", href: "/reports", icon: "📊" },
+  { label: "nav.ai_providers", href: "/ai-providers", icon: "🤖" },
   { label: "nav.settings", href: "/settings", icon: "⚙" },
 ];
 

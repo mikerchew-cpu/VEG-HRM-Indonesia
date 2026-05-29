@@ -1,4 +1,4 @@
-export type AiProvider = "deepseek" | "claude" | "gemini" | "custom";
+export type AiProvider = "deepseek" | "claude" | "gemini" | "qwen" | "custom";
 
 export interface AiRequest {
   provider: AiProvider;
@@ -23,4 +23,6 @@ export interface AiProviderConfig {
   defaultModel: string;
   envKey: string;
   baseUrl: string;
+  docsUrl: string;
+  color: string;
 }

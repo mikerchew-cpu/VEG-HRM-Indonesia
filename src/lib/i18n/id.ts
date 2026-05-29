@@ -7,6 +7,7 @@ export const id = {
   "nav.compliance": "Kepatuhan",
   "nav.helpdesk": "Help Desk",
   "nav.reports": "Laporan AI",
+  "nav.ai_providers": "AI Providers",
   "nav.settings": "Pengaturan",
 
   // Header
